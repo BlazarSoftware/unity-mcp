@@ -91,19 +91,30 @@ namespace MCPForUnity.Editor.Tools
 
             try
             {
-                File.WriteAllText(uxmlFile, BuildUxml(baseName, rootElementName));
                 File.WriteAllText(ussFile, BuildUss());
             }
             catch (Exception ex)
             {
-                return new ErrorResponse($"Failed to write UI Toolkit files: {ex.Message}");
+                return new ErrorResponse($"Failed to write USS file: {ex.Message}");
+            }
+
+            AssetDatabase.ImportAsset(ussAssetPath, ImportAssetOptions.ForceUpdate);
+            string ussGuid = AssetDatabase.AssetPathToGUID(ussAssetPath);
+            string styleSrc = BuildStyleSrc(ussAssetPath, ussGuid);
+
+            try
+            {
+                File.WriteAllText(uxmlFile, BuildUxml(styleSrc, rootElementName));
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResponse($"Failed to write UXML file: {ex.Message}");
             }
 
             AssetDatabase.ImportAsset(uxmlAssetPath, ImportAssetOptions.ForceUpdate);
-            AssetDatabase.ImportAsset(ussAssetPath, ImportAssetOptions.ForceUpdate);
 
-            var uxmlAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlAssetPath);
             var ussAsset = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussAssetPath);
+            var uxmlAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlAssetPath);
 
             var data = new
             {
@@ -182,12 +193,40 @@ namespace MCPForUnity.Editor.Tools
             return true;
         }
 
-        private static string BuildUxml(string baseName, string rootElementName)
+        private static string BuildStyleSrc(string ussAssetPath, string ussGuid)
+        {
+            if (!string.IsNullOrEmpty(ussGuid))
+            {
+                // Standard StyleSheet fileID used by Unity for UXML references
+                const string styleSheetFileId = "7433441132597879392";
+                var reference = $"project://database/{ussAssetPath}?fileID={styleSheetFileId}&guid={ussGuid}&type=3#StyleSheet";
+                return EscapeXmlAttribute(reference);
+            }
+
+            // Fallback to relative filename if no guid is available (should be rare)
+            return EscapeXmlAttribute(Path.GetFileName(ussAssetPath));
+        }
+
+        private static string EscapeXmlAttribute(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
+            return value
+                .Replace("&", "&amp;")
+                .Replace("\"", "&quot;")
+                .Replace("<", "&lt;")
+                .Replace(">", "&gt;");
+        }
+
+        private static string BuildUxml(string styleSrc, string rootElementName)
         {
             return
-$@"<ui:UXML xmlns:ui=\"UnityEngine.UIElements\" xmlns:uie=\"UnityEditor.UIElements\" editor-extension-mode=\"False\">
-    <Style src=\"{baseName}.uss\" />
-    <ui:VisualElement name=\"{rootElementName}\" picking-mode=\"Position\" />
+$@"<ui:UXML xmlns:ui=""UnityEngine.UIElements"" xmlns:uie=""UnityEditor.UIElements"" editor-extension-mode=""False"">
+    <Style src=""{styleSrc}"" />
+    <ui:VisualElement name=""{rootElementName}"" picking-mode=""Position"" />
 </ui:UXML>
 ";
         }
