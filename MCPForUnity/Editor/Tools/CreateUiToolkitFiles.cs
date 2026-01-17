@@ -13,12 +13,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Generates paired UXML/USS files under Assets/ and validates Unity imports.
     /// </summary>
-    [McpForUnityTool(
-        "create_ui_toolkit_files",
-        Description = "Generate a UXML + USS pair under Assets/ and validate import via Unity.",
-        AutoRegister = true,
-        StructuredOutput = true
-    )]
+    [McpForUnityTool("create_ui_toolkit_files", description: "Creates UXML and USS files for UI Toolkit interfaces.")]
     public static class CreateUiToolkitFiles
     {
         public class Parameters

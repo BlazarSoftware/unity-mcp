@@ -44,7 +44,9 @@ namespace MCPForUnity.Editor.Resources.Scene
 
             try
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 var go = EditorUtility.InstanceIDToObject(instanceID.Value) as GameObject;
+#pragma warning restore CS0618 // Type or member is obsolete
                 if (go == null)
                 {
                     return new ErrorResponse($"GameObject with instance ID {instanceID} not found.");
@@ -150,7 +152,9 @@ namespace MCPForUnity.Editor.Resources.Scene
 
             try
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 var go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+#pragma warning restore CS0618 // Type or member is obsolete
                 if (go == null)
                 {
                     return new ErrorResponse($"GameObject with instance ID {instanceID} not found.");
@@ -235,7 +239,9 @@ namespace MCPForUnity.Editor.Resources.Scene
 
             try
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 var go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+#pragma warning restore CS0618 // Type or member is obsolete
                 if (go == null)
                 {
                     return new ErrorResponse($"GameObject with instance ID {instanceID} not found.");

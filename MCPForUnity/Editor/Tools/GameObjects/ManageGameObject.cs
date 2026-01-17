@@ -13,7 +13,7 @@ namespace MCPForUnity.Editor.Tools.GameObjects
     /// <summary>
     /// Handles GameObject manipulation within the current scene (CRUD, find, components).
     /// </summary>
-    [McpForUnityTool("manage_gameobject", AutoRegister = false)]
+    [McpForUnityTool("manage_gameobject", AutoRegister = false, Description = "Create, modify, and delete GameObjects. Supports parenting, transforming, and component management.")]
     public static class ManageGameObject
     {
         // --- Main Handler ---

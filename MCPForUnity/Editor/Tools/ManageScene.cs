@@ -15,7 +15,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles scene management operations like loading, saving, creating, and querying hierarchy.
     /// </summary>
-    [McpForUnityTool("manage_scene", AutoRegister = false)]
+    [McpForUnityTool("manage_scene", AutoRegister = false, Description = "Create, load, save, and query Unity scenes. Also supports capturing screenshots.")]
     public static class ManageScene
     {
         private sealed class SceneCommand

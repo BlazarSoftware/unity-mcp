@@ -12,7 +12,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles animation system operations including animator parameters, states, and playback control.
     /// </summary>
-    [McpForUnityTool("manage_animator", AutoRegister = false)]
+    [McpForUnityTool("manage_animator", AutoRegister = false, Description = "Controls Animator components: play states, set parameters (bool, float, int, trigger), and reset triggers.")]
     public static class ManageAnimator
     {
         public static object HandleCommand(JObject @params)

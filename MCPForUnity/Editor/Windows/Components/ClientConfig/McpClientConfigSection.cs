@@ -80,11 +80,19 @@ namespace MCPForUnity.Editor.Windows.Components.ClientConfig
             clientDropdown.choices = clientNames;
             if (clientNames.Count > 0)
             {
-                clientDropdown.index = 0;
+                // Load saved selection from EditorPrefs
+                int savedIndex = EditorPrefs.GetInt(EditorPrefKeys.SelectedClientIndex, 0);
+                // Ensure saved index is valid
+                if (savedIndex < 0 || savedIndex >= clientNames.Count)
+                {
+                    savedIndex = 0;
+                }
+                clientDropdown.index = savedIndex;
+                selectedClientIndex = savedIndex;
             }
 
             claudeCliPathRow.style.display = DisplayStyle.None;
-            
+
             // Initialize the configuration display for the first selected client
             UpdateClientStatus();
             UpdateManualConfiguration();
@@ -96,6 +104,8 @@ namespace MCPForUnity.Editor.Windows.Components.ClientConfig
             clientDropdown.RegisterValueChangedCallback(evt =>
             {
                 selectedClientIndex = clientDropdown.index;
+                // Save selection to EditorPrefs
+                EditorPrefs.SetInt(EditorPrefKeys.SelectedClientIndex, selectedClientIndex);
                 UpdateClientStatus();
                 UpdateManualConfiguration();
                 UpdateClaudeCliPathVisibility();

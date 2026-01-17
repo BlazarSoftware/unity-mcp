@@ -21,9 +21,7 @@ namespace MCPForUnity.Editor.Tools
     /// Runtime compilation tool for MCP Unity.
     /// Compiles and loads C# code at runtime without triggering domain reload via Roslyn Runtime Compilation, where in traditional Unity workflow it would take seconds to reload assets and reset script states for each script change. 
     /// </summary>
-    [McpForUnityTool(
-        name:"runtime_compilation",
-        Description = "Enable runtime compilation of C# code within Unity without domain reload via Roslyn.")]
+    [McpForUnityTool("manage_runtime_compilation", description: "Manages Roslyn runtime compilation settings, allowing you to define scripts to compile at runtime.")]
     public static class ManageRuntimeCompilation
     {
         private static readonly Dictionary<string, LoadedAssemblyInfo> LoadedAssemblies = new Dictionary<string, LoadedAssemblyInfo>();

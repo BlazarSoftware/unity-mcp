@@ -189,6 +189,13 @@ namespace MCPForUnity.Editor.Windows.Components.Tools
                 description.AddToClassList("tool-item-description");
                 row.Add(description);
             }
+            else
+            {
+                var warning = new Label("⚠ Missing description! Tools require a description for the LLM.");
+                warning.AddToClassList("tool-item-description");
+                warning.AddToClassList("tool-description-warning");
+                row.Add(warning);
+            }
 
             if (tool.Parameters != null && tool.Parameters.Count > 0)
             {

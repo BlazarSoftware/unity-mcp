@@ -29,6 +29,8 @@ namespace MCPForUnity.Editor.Windows.Components.Connection
         // UI Elements
         private EnumField transportDropdown;
         private VisualElement httpUrlRow;
+        private VisualElement httpPortRow;
+        private IntegerField httpPortField;
         private VisualElement httpServerCommandSection;
         private TextField httpServerCommandField;
         private Button copyHttpServerCommandButton;
@@ -77,6 +79,8 @@ namespace MCPForUnity.Editor.Windows.Components.Connection
         {
             transportDropdown = Root.Q<EnumField>("transport-dropdown");
             httpUrlRow = Root.Q<VisualElement>("http-url-row");
+            httpPortRow = Root.Q<VisualElement>("http-port-row");
+            httpPortField = Root.Q<IntegerField>("http-port");
             httpServerCommandSection = Root.Q<VisualElement>("http-server-command-section");
             httpServerCommandField = Root.Q<TextField>("http-server-command");
             copyHttpServerCommandButton = Root.Q<Button>("copy-http-server-command-button");
@@ -124,6 +128,12 @@ namespace MCPForUnity.Editor.Windows.Components.Connection
             }
 
             httpUrlField.value = HttpEndpointUtility.GetBaseUrl();
+
+            // Initialize HTTP port field
+            if (httpPortField != null)
+            {
+                httpPortField.value = HttpEndpointUtility.GetPort();
+            }
 
             int unityPort = EditorPrefs.GetInt(EditorPrefKeys.UnitySocketPort, 0);
             if (unityPort == 0)
@@ -215,6 +225,20 @@ namespace MCPForUnity.Editor.Windows.Components.Connection
                 }
             });
 
+            // HTTP port field - update URL when port changes
+            if (httpPortField != null)
+            {
+                httpPortField.RegisterCallback<FocusOutEvent>(_ => PersistHttpPortFromField());
+                httpPortField.RegisterCallback<KeyDownEvent>(evt =>
+                {
+                    if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
+                    {
+                        PersistHttpPortFromField();
+                        evt.StopPropagation();
+                    }
+                });
+            }
+
             if (startHttpServerButton != null)
             {
                 startHttpServerButton.clicked += OnHttpServerToggleClicked;
@@ -268,6 +292,30 @@ namespace MCPForUnity.Editor.Windows.Components.Connection
             HttpEndpointUtility.SaveBaseUrl(httpUrlField.text);
             // Update displayed value to normalized form without re-triggering callbacks/caret jumps.
             httpUrlField.SetValueWithoutNotify(HttpEndpointUtility.GetBaseUrl());
+            // Sync the port field with the URL
+            httpPortField?.SetValueWithoutNotify(HttpEndpointUtility.GetPort());
+            OnManualConfigUpdateRequested?.Invoke();
+            RefreshHttpUi();
+        }
+
+        private void PersistHttpPortFromField()
+        {
+            if (httpPortField == null)
+            {
+                return;
+            }
+
+            int port = httpPortField.value;
+            if (port <= 0 || port > 65535)
+            {
+                // Invalid port, reset to current value
+                httpPortField.SetValueWithoutNotify(HttpEndpointUtility.GetPort());
+                return;
+            }
+
+            HttpEndpointUtility.SetPort(port);
+            // Sync the URL field with the new port
+            httpUrlField?.SetValueWithoutNotify(HttpEndpointUtility.GetBaseUrl());
             OnManualConfigUpdateRequested?.Invoke();
             RefreshHttpUi();
         }
@@ -457,6 +505,10 @@ namespace MCPForUnity.Editor.Windows.Components.Connection
             bool useHttp = (TransportProtocol)transportDropdown.value != TransportProtocol.Stdio;
 
             httpUrlRow.style.display = useHttp ? DisplayStyle.Flex : DisplayStyle.None;
+            if (httpPortRow != null)
+            {
+                httpPortRow.style.display = useHttp ? DisplayStyle.Flex : DisplayStyle.None;
+            }
             unitySocketPortRow.style.display = useHttp ? DisplayStyle.None : DisplayStyle.Flex;
         }
 

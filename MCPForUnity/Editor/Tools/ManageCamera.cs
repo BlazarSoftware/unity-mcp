@@ -13,7 +13,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles camera operations including property configuration, capture, and targeting.
     /// </summary>
-    [McpForUnityTool("manage_camera", AutoRegister = false)]
+    [McpForUnityTool("manage_camera", AutoRegister = false, Description = "Manage Camera components: field of view, clipping planes, and background color.")]
     public static class ManageCamera
     {
         public static object HandleCommand(JObject @params)

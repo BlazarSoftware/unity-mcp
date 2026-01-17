@@ -11,6 +11,10 @@
                 <ui:Label text="Debug Mode:" class="setting-label" />
                 <ui:Toggle name="debug-logs-toggle" class="setting-toggle" />
             </ui:VisualElement>
+            <ui:VisualElement class="setting-row" name="terminal-app-row">
+                <ui:Label text="Terminal App:" class="setting-label" />
+                <ui:DropdownField name="terminal-app-dropdown" class="setting-dropdown-inline" />
+            </ui:VisualElement>
             <ui:VisualElement class="setting-column">
                 <ui:Label text="Script Validation Level:" class="setting-label" />
                 <uie:EnumField name="validation-level" class="setting-dropdown" />
@@ -51,7 +55,7 @@
                     <ui:Label text="Local Package Deployment:" class="advanced-label" style="margin-top: 12px;" />
                     <ui:Label text="Copy a MCPForUnity folder into this project's package location." class="help-text" />
                     <ui:VisualElement class="override-row">
-                        <ui:Label text="MCP For Unity Source Folder:" class="override-label" />
+                        <ui:Label text="Cranky MCP Source Folder:" class="override-label" />
                     </ui:VisualElement>
                     <ui:VisualElement class="path-override-controls">
                         <ui:TextField name="deploy-source-path" class="override-field" />

@@ -1311,10 +1311,13 @@ namespace MCPForUnity.Editor.Services
                 "clear\n" +
                 $"{command}\n");
             ExecPath.TryRun("/bin/chmod", $"+x \"{scriptPath}\"", Application.dataPath, out _, out _, 3000);
+
+            // Get preferred terminal from EditorPrefs (default to Terminal)
+            string terminalApp = EditorPrefs.GetString(EditorPrefKeys.MacTerminalApp, "Terminal");
             return new System.Diagnostics.ProcessStartInfo
             {
                 FileName = "/usr/bin/open",
-                Arguments = $"-a Terminal \"{scriptPath}\"",
+                Arguments = $"-a \"{terminalApp}\" \"{scriptPath}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };

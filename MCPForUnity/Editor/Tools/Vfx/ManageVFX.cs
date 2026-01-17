@@ -22,7 +22,7 @@ namespace MCPForUnity.Editor.Tools.Vfx
     /// - TrailRenderer (motion trails)
     /// - More to come based on demand and feedback!
     /// </summary>
-    [McpForUnityTool("manage_vfx", AutoRegister = false)]
+    [McpForUnityTool("manage_vfx", AutoRegister = false, Description = "Unified tool for managing Visual Effects (VFX Graph, Particle System, Line Renderer, Trail Renderer).")]
     public static class ManageVFX
     {
         public static object HandleCommand(JObject @params)

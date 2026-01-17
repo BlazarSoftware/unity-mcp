@@ -11,7 +11,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles physics operations including raycasting, collision queries, rigidbody configuration, and physics settings.
     /// </summary>
-    [McpForUnityTool("manage_physics", AutoRegister = false)]
+    [McpForUnityTool("manage_physics", AutoRegister = false, Description = "Manage global physics settings, raycast, and control Rigidbody/Collider components.")]
     public static class ManagePhysics
     {
         public static object HandleCommand(JObject @params)

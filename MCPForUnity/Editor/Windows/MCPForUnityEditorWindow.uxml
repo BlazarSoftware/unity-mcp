@@ -1,15 +1,26 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
-    <ui:VisualElement name="root-container" class="root-layout">
-        <ui:Label text="MCP For Unity" name="title" class="title" />
-        <uie:Toolbar name="tab-toolbar" class="tab-toolbar">
-            <uie:ToolbarToggle name="settings-tab" text="Settings" value="true" />
-            <uie:ToolbarToggle name="tools-tab" text="Tools" />
-        </uie:Toolbar>
-        <ui:ScrollView name="settings-panel" class="panel-scroll" style="flex-grow: 1;">
-            <ui:VisualElement name="settings-container" class="section-stack" />
-        </ui:ScrollView>
-        <ui:ScrollView name="tools-panel" class="panel-scroll hidden" style="flex-grow: 1;">
-            <ui:VisualElement name="tools-container" class="section-stack" />
-        </ui:ScrollView>
+    <ui:VisualElement name="root-background" class="root-background">
+        <ui:VisualElement name="root-container" class="root-layout">
+            <ui:VisualElement name="header-container" class="header">
+                 <ui:VisualElement name="logo-icon" class="header-logo" />
+                 <ui:Label text="Cranky MCP" name="title" class="header-title" />
+            </ui:VisualElement>
+            
+            <ui:VisualElement name="tabs-container" class="tabs-container">
+                <uie:Toolbar name="tab-toolbar" class="tab-toolbar">
+                    <uie:ToolbarToggle name="settings-tab" text="Settings" value="true" class="tab-toggle" />
+                    <uie:ToolbarToggle name="tools-tab" text="Tools" class="tab-toggle" />
+                </uie:Toolbar>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="content-container" class="content-container">
+                <ui:ScrollView name="settings-panel" class="panel-scroll" style="flex-grow: 1;">
+                    <ui:VisualElement name="settings-container" class="section-stack" />
+                </ui:ScrollView>
+                <ui:ScrollView name="tools-panel" class="panel-scroll hidden" style="flex-grow: 1;">
+                    <ui:VisualElement name="tools-container" class="section-stack" />
+                </ui:ScrollView>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

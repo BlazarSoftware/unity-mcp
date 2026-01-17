@@ -13,7 +13,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles Unity Package Manager operations including listing, adding, removing, and searching packages.
     /// </summary>
-    [McpForUnityTool("manage_packages", AutoRegister = false)]
+    [McpForUnityTool("manage_packages", AutoRegister = false, Description = "Install, remove, and list Unity packages via the Package Manager.")]
     public static class ManagePackages
     {
         // Track ongoing requests for async operations

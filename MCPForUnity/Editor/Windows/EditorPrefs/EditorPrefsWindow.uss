@@ -1,30 +1,45 @@
-.header {
-    padding-bottom: 16px;
-    border-bottom-width: 1px;
-    border-bottom-color: #333333;
+/* EditorPrefs Window Styles - Professional Theme */
+
+/* Header customization for prefs window */
+.prefs-header {
+    flex-direction: row;
+    align-items: center;
     margin-bottom: 16px;
 }
 
-.title {
-    -unity-font-style: bold;
-    font-size: 18px;
-    margin-bottom: 4px;
+.prefs-logo {
+    width: 48px;
+    height: 48px;
 }
 
-.description {
-    color: #999999;
+.header-text-container {
+    flex-direction: column;
+}
+
+.prefs-title {
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+.prefs-description {
+    color: #90A4AE;
     font-size: 12px;
-    white-space: normal;
-    margin-left: 4px;
+    margin-left: 2px;
 }
 
+/* Scroll container */
+.prefs-scroll {
+    flex-grow: 1;
+}
+
+/* Controls section */
 .controls {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
     padding: 8px;
-    background-color: #393939;
+    background-color: rgba(0, 0, 0, 0.3);
     border-radius: 4px;
 }
 
@@ -33,47 +48,23 @@
 }
 
 .primary-button {
-    -unity-text-align: middle-left;
-    background-color: #4a90e2;
+    -unity-text-align: middle-center;
+    background-color: #1565C0;
     color: white;
     border-radius: 4px;
     padding: 8px 16px;
+    -unity-font-style: bold;
 }
 
 .primary-button:hover {
-    background-color: #357abd;
-}
-
-.secondary-button {
-    background-color: #393939;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-left-color: #555555;
-    border-right-color: #555555;
-    border-top-color: #555555;
-    border-bottom-color: #555555;
-    border-radius: 4px;
-    padding: 6px 12px;
-    width: 80px;
-}
-
-.secondary-button:hover {
-    background-color: #484848;
+    background-color: #1976D2;
 }
 
 /* Add New Row */
 .add-new-row {
-    background-color: #393939;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-left-color: #555555;
-    border-right-color: #555555;
-    border-top-color: #555555;
-    border-bottom-color: #555555;
+    background-color: #383838;
+    border-width: 1px;
+    border-color: #4a4a4a;
     border-radius: 4px;
     padding: 16px;
     margin-bottom: 16px;
@@ -82,6 +73,7 @@
 .add-row-content {
     flex-direction: row;
     align-items: flex-end;
+    flex-wrap: wrap;
 }
 
 .add-row-content .key-field {
@@ -112,10 +104,12 @@
 }
 
 .save-button {
-    background-color: #4caf50;
+    background-color: #4CAF50;
     color: white;
     min-width: 60px;
     border-radius: 4px;
+    border-width: 0;
+    -unity-font-style: bold;
 }
 
 .save-button:hover {
@@ -123,21 +117,16 @@
 }
 
 .cancel-button {
-    background-color: #393939;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-left-color: #555555;
-    border-right-color: #555555;
-    border-top-color: #555555;
-    border-bottom-color: #555555;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.2);
     min-width: 60px;
     border-radius: 4px;
+    color: #E0E0E0;
 }
 
 .cancel-button:hover {
-    background-color: #484848;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Pref Items */
@@ -147,25 +136,27 @@
 
 .pref-item {
     margin-bottom: 0;
-    background-color: #393939;
-    border-left-width: 0;
-    border-right-width: 0;
-    border-top-width: 0;
+    background-color: #383838;
+    border-width: 0;
     border-bottom-width: 1px;
-    border-bottom-color: #555555;
+    border-bottom-color: #4a4a4a;
     border-radius: 0;
-    padding: 8px;
+    padding: 10px 8px;
+}
+
+.pref-item:hover {
+    background-color: #424242;
 }
 
 .pref-row {
     flex-direction: row;
     align-items: center;
-    flex-wrap: nowrap; /* Prevent wrapping */
+    flex-wrap: nowrap;
 }
 
 .pref-row .key-section {
     flex-shrink: 0;
-    width: 200px; /* Fixed width for key section */
+    width: 200px;
     margin-right: 12px;
 }
 
@@ -193,8 +184,9 @@
 
 .key-label {
     -unity-font-style: bold;
-    color: white;
+    color: #E0E0E0;
     white-space: normal;
+    font-size: 13px;
 }
 
 .value-field {
@@ -211,13 +203,15 @@
 }
 
 .action-buttons .save-button {
-    background-color: #4caf50;
+    background-color: #4CAF50;
     color: white;
     min-width: 32px;
     height: 28px;
     padding: 0;
-    font-size: 16px;
+    font-size: 14px;
     -unity-font-style: bold;
+    border-width: 0;
+    border-radius: 4px;
 }
 
 .action-buttons .save-button:hover {

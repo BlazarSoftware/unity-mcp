@@ -16,7 +16,7 @@ namespace MCPForUnity.Editor.Tools
     /// This is a focused tool for component lifecycle operations.
     /// For reading component data, use the unity://scene/gameobject/{id}/components resource.
     /// </summary>
-    [McpForUnityTool("manage_components")]
+    [McpForUnityTool("manage_components", description: "Add, remove, and modify components on GameObjects. Supports setting properties on any component type.")]
     public static class ManageComponents
     {
         /// <summary>

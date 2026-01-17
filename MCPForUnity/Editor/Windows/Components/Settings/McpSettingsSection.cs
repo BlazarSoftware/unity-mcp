@@ -20,6 +20,8 @@ namespace MCPForUnity.Editor.Windows.Components.Settings
         // UI Elements
         private Label versionLabel;
         private Toggle debugLogsToggle;
+        private VisualElement terminalAppRow;
+        private DropdownField terminalAppDropdown;
         private EnumField validationLevelField;
         private Label validationDescription;
         private Foldout advancedSettingsFoldout;
@@ -70,6 +72,8 @@ namespace MCPForUnity.Editor.Windows.Components.Settings
         {
             versionLabel = Root.Q<Label>("version-label");
             debugLogsToggle = Root.Q<Toggle>("debug-logs-toggle");
+            terminalAppRow = Root.Q<VisualElement>("terminal-app-row");
+            terminalAppDropdown = Root.Q<DropdownField>("terminal-app-dropdown");
             validationLevelField = Root.Q<EnumField>("validation-level");
             validationDescription = Root.Q<Label>("validation-description");
             advancedSettingsFoldout = Root.Q<Foldout>("advanced-settings-foldout");
@@ -98,6 +102,9 @@ namespace MCPForUnity.Editor.Windows.Components.Settings
             bool debugEnabled = EditorPrefs.GetBool(EditorPrefKeys.DebugLogs, false);
             debugLogsToggle.value = debugEnabled;
             McpLog.SetDebugLoggingEnabled(debugEnabled);
+
+            // Terminal app dropdown (macOS only)
+            InitializeTerminalAppDropdown();
 
             validationLevelField.Init(ValidationLevel.Standard);
             int savedLevel = EditorPrefs.GetInt(EditorPrefKeys.ValidationLevel, 1);
@@ -294,6 +301,36 @@ namespace MCPForUnity.Editor.Windows.Components.Settings
                 OnHttpServerCommandUpdateRequested?.Invoke();
                 McpLog.Info($"Server source override set to: {picked}");
             }
+        }
+
+        private void InitializeTerminalAppDropdown()
+        {
+            // Only show terminal app dropdown on macOS
+#if UNITY_EDITOR_OSX
+            if (terminalAppRow != null)
+            {
+                terminalAppRow.style.display = DisplayStyle.Flex;
+            }
+
+            if (terminalAppDropdown != null)
+            {
+                terminalAppDropdown.choices = new System.Collections.Generic.List<string> { "Terminal", "iTerm" };
+                string savedTerminal = EditorPrefs.GetString(EditorPrefKeys.MacTerminalApp, "Terminal");
+                terminalAppDropdown.value = savedTerminal;
+
+                terminalAppDropdown.RegisterValueChangedCallback(evt =>
+                {
+                    EditorPrefs.SetString(EditorPrefKeys.MacTerminalApp, evt.newValue);
+                    McpLog.Info($"Terminal app changed to: {evt.newValue}");
+                });
+            }
+#else
+            // Hide terminal app row on non-macOS platforms
+            if (terminalAppRow != null)
+            {
+                terminalAppRow.style.display = DisplayStyle.None;
+            }
+#endif
         }
 
         private void UpdateDeploymentSection()

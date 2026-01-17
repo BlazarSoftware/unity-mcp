@@ -12,7 +12,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles lighting system operations including light configuration, lightmap baking, probes, and ambient settings.
     /// </summary>
-    [McpForUnityTool("manage_lighting", AutoRegister = false)]
+    [McpForUnityTool("manage_lighting", AutoRegister = false, Description = "Manage lighting settings, Light components, and reflection probes.")]
     public static class ManageLighting
     {
         public static object HandleCommand(JObject @params)

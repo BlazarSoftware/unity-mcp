@@ -11,7 +11,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles audio system operations including AudioSource control, clip info, and audio configuration.
     /// </summary>
-    [McpForUnityTool("manage_audio", AutoRegister = false)]
+    [McpForUnityTool("manage_audio", AutoRegister = false, Description = "Manage AudioSource components: play, pause, stop, and set properties like volume and clip.")]
     public static class ManageAudio
     {
         public static object HandleCommand(JObject @params)

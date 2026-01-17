@@ -52,7 +52,7 @@ namespace MCPForUnity.Editor.Windows
 
         public static void ShowWindow()
         {
-            var window = GetWindow<MCPForUnityEditorWindow>("MCP For Unity");
+            var window = GetWindow<MCPForUnityEditorWindow>("Cranky MCP");
             window.minSize = new Vector2(500, 600);
         }
 

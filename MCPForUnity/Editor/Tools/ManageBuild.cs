@@ -13,7 +13,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles build automation operations including player builds, build settings, and player settings.
     /// </summary>
-    [McpForUnityTool("manage_build", AutoRegister = false)]
+    [McpForUnityTool("manage_build", AutoRegister = false, Description = "Manage build settings, switch platforms, and build the player.")]
     public static class ManageBuild
     {
         public static object HandleCommand(JObject @params)

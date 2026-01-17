@@ -41,6 +41,7 @@ namespace MCPForUnity.Editor.Constants
         internal const string ToolEnabledPrefix = "MCPForUnity.ToolEnabled.";
         internal const string ToolFoldoutStatePrefix = "MCPForUnity.ToolFoldout.";
         internal const string EditorWindowActivePanel = "MCPForUnity.EditorWindow.ActivePanel";
+        internal const string SelectedClientIndex = "MCPForUnity.SelectedClientIndex";
 
         internal const string SetupCompleted = "MCPForUnity.SetupCompleted";
         internal const string SetupDismissed = "MCPForUnity.SetupDismissed";
@@ -53,5 +54,11 @@ namespace MCPForUnity.Editor.Constants
 
         internal const string TelemetryDisabled = "MCPForUnity.TelemetryDisabled";
         internal const string CustomerUuid = "MCPForUnity.CustomerUUID";
+
+        // macOS terminal preference
+        internal const string MacTerminalApp = "MCPForUnity.MacTerminalApp";
+
+        // HTTP port (for dedicated port field)
+        internal const string HttpPort = "MCPForUnity.HttpPort";
     }
 }

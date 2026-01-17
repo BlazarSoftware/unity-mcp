@@ -51,7 +51,7 @@ namespace MCPForUnity.Editor.Tools
     /// Note: Without Roslyn, the system falls back to basic structural validation.
     /// Roslyn provides full C# compiler diagnostics with line numbers and detailed error messages.
     /// </remarks>
-    [McpForUnityTool("manage_script", AutoRegister = false)]
+    [McpForUnityTool("manage_script", AutoRegister = false, Description = "Create, read, and delete C# scripts. Prefer apply_text_edits for modification.")]
     public static class ManageScript
     {
         /// <summary>

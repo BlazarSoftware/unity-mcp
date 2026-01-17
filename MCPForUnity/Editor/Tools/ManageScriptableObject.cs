@@ -17,7 +17,7 @@ namespace MCPForUnity.Editor.Tools
     ///
     /// Patching is performed via SerializedObject/SerializedProperty paths (Unity-native), not reflection.
     /// </summary>
-    [McpForUnityTool("manage_scriptable_object", AutoRegister = false)]
+    [McpForUnityTool("manage_scriptable_object", AutoRegister = false, Description = "Create and modify ScriptableObject assets.")]
     public static class ManageScriptableObject
     {
         private const string CodeCompilingOrReloading = "compiling_or_reloading";

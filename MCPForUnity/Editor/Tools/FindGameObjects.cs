@@ -13,7 +13,7 @@ namespace MCPForUnity.Editor.Tools
     /// This is a focused search tool that returns lightweight results (IDs only).
     /// For detailed GameObject data, use the unity://scene/gameobject/{id} resource.
     /// </summary>
-    [McpForUnityTool("find_gameobjects")]
+    [McpForUnityTool("find_gameobjects", Description = "Searches for GameObjects by name, tag, layer, component, or path.")]
     public static class FindGameObjects
     {
         /// <summary>

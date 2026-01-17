@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MCPForUnity.Editor.Tools
 {
-    [McpForUnityTool("manage_material", AutoRegister = false)]
+    [McpForUnityTool("manage_material", AutoRegister = false, Description = "Create and modify materials, including setting shader properties and colors.")]
     public static class ManageMaterial
     {
         public static object HandleCommand(JObject @params)

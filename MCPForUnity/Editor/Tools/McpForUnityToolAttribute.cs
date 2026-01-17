@@ -71,6 +71,17 @@ namespace MCPForUnity.Editor.Tools
         {
             Name = name;
         }
+
+        /// <summary>
+        /// Create an MCP tool attribute with explicit command name and description.
+        /// </summary>
+        /// <param name="name">The command name (e.g., "manage_asset")</param>
+        /// <param name="description">The description of what the tool does</param>
+        public McpForUnityToolAttribute(string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
     }
 
     /// <summary>

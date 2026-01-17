@@ -13,7 +13,7 @@ namespace MCPForUnity.Editor.Tools
     /// <summary>
     /// Handles uGUI Canvas and UI element operations including creating canvases, adding UI elements, and configuring layouts.
     /// </summary>
-    [McpForUnityTool("manage_canvas", AutoRegister = false)]
+    [McpForUnityTool("manage_canvas", AutoRegister = false, Description = "Create and manage UI Canvases and basic UI elements.")]
     public static class ManageCanvas
     {
         public static object HandleCommand(JObject @params)

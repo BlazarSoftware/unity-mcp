@@ -49,6 +49,32 @@ namespace MCPForUnity.Editor.Helpers
         }
 
         /// <summary>
+        /// Gets the port from the current HTTP URL.
+        /// </summary>
+        public static int GetPort()
+        {
+            string url = GetBaseUrl();
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                return uri.Port;
+            }
+            return 8080;
+        }
+
+        /// <summary>
+        /// Sets the port in the HTTP URL while preserving other parts.
+        /// </summary>
+        public static void SetPort(int port)
+        {
+            string url = GetBaseUrl();
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                var builder = new UriBuilder(uri) { Port = port };
+                SaveBaseUrl(builder.Uri.ToString().TrimEnd('/'));
+            }
+        }
+
+        /// <summary>
         /// Normalizes a URL so that we consistently store just the base (no trailing slash/path).
         /// </summary>
         private static string NormalizeBaseUrl(string value)
