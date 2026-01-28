@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using MCPForUnity.Editor.Helpers;
 using Newtonsoft.Json.Linq;
@@ -15,7 +16,7 @@ namespace MCPForUnity.Editor.Tools.Prefabs
     /// </summary>
     public static class ManagePrefabs
     {
-        private const string SupportedActions = "open_stage, close_stage, save_open_stage, create_from_gameobject";
+        private const string SupportedActions = "open_stage, close_stage, save_open_stage, create_from_gameobject, create_from_model";
 
         public static object HandleCommand(JObject @params)
         {
@@ -42,6 +43,8 @@ namespace MCPForUnity.Editor.Tools.Prefabs
                         return SaveOpenStage();
                     case "create_from_gameobject":
                         return CreatePrefabFromGameObject(@params);
+                    case "create_from_model":
+                        return CreatePrefabFromModel(@params);
                     default:
                         return new ErrorResponse($"Unknown action: '{action}'. Valid actions are: {SupportedActions}.");
                 }
@@ -208,6 +211,146 @@ namespace MCPForUnity.Editor.Tools.Prefabs
             catch (Exception e)
             {
                 return new ErrorResponse($"Error saving prefab asset at '{finalPath}': {e.Message}");
+            }
+        }
+
+        private static object CreatePrefabFromModel(JObject @params)
+        {
+            string modelPath = @params["modelPath"]?.ToString();
+            if (string.IsNullOrEmpty(modelPath))
+            {
+                return new ErrorResponse("'modelPath' parameter is required for create_from_model.");
+            }
+
+            string requestedPath = @params["prefabPath"]?.ToString();
+            if (string.IsNullOrWhiteSpace(requestedPath))
+            {
+                return new ErrorResponse("'prefabPath' parameter is required for create_from_model.");
+            }
+
+            string sanitizedModelPath = AssetPathUtility.SanitizeAssetPath(modelPath);
+            string sanitizedPrefabPath = AssetPathUtility.SanitizeAssetPath(requestedPath);
+
+            if (!sanitizedPrefabPath.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase))
+            {
+                sanitizedPrefabPath += ".prefab";
+            }
+
+            // Load the model
+            GameObject modelAsset = AssetDatabase.LoadAssetAtPath<GameObject>(sanitizedModelPath);
+            if (modelAsset == null)
+            {
+                return new ErrorResponse($"Model asset not found: {sanitizedModelPath}");
+            }
+
+            bool allowOverwrite = @params["allowOverwrite"]?.ToObject<bool>() ?? false;
+            string finalPath = sanitizedPrefabPath;
+
+            if (!allowOverwrite && AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(finalPath) != null)
+            {
+                finalPath = AssetDatabase.GenerateUniqueAssetPath(finalPath);
+            }
+
+            EnsureAssetDirectoryExists(finalPath);
+
+            try
+            {
+                // Instantiate the model in the scene temporarily
+                GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(modelAsset);
+                if (instance == null)
+                {
+                    // Fallback to regular instantiation
+                    instance = UnityEngine.Object.Instantiate(modelAsset);
+                }
+
+                instance.name = Path.GetFileNameWithoutExtension(finalPath);
+
+                // Add Animator component with controller if specified
+                string animatorControllerPath = @params["animatorController"]?.ToString();
+                if (!string.IsNullOrEmpty(animatorControllerPath))
+                {
+                    string sanitizedControllerPath = AssetPathUtility.SanitizeAssetPath(animatorControllerPath);
+                    var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(sanitizedControllerPath);
+
+                    if (controller != null)
+                    {
+                        Animator animator = instance.GetComponent<Animator>();
+                        if (animator == null)
+                        {
+                            animator = instance.AddComponent<Animator>();
+                        }
+                        animator.runtimeAnimatorController = controller;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[ManagePrefabs] Animator controller not found: {sanitizedControllerPath}");
+                    }
+                }
+
+                // Add specified components
+                JArray components = @params["components"] as JArray;
+                var addedComponents = new List<string>();
+
+                if (components != null)
+                {
+                    foreach (var componentToken in components)
+                    {
+                        string componentTypeName = componentToken.ToString();
+
+                        // Try to find the type
+                        Type componentType = null;
+
+                        // Search in common assemblies
+                        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                        {
+                            componentType = assembly.GetType(componentTypeName);
+                            if (componentType != null) break;
+
+                            // Try with UnityEngine prefix
+                            componentType = assembly.GetType($"UnityEngine.{componentTypeName}");
+                            if (componentType != null) break;
+                        }
+
+                        if (componentType != null && typeof(Component).IsAssignableFrom(componentType))
+                        {
+                            if (instance.GetComponent(componentType) == null)
+                            {
+                                instance.AddComponent(componentType);
+                                addedComponents.Add(componentTypeName);
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[ManagePrefabs] Component type not found or not a Component: {componentTypeName}");
+                        }
+                    }
+                }
+
+                // Save as prefab
+                GameObject prefabAsset = PrefabUtility.SaveAsPrefabAsset(instance, finalPath);
+
+                // Cleanup scene instance
+                UnityEngine.Object.DestroyImmediate(instance);
+
+                if (prefabAsset == null)
+                {
+                    return new ErrorResponse($"Failed to save prefab asset at '{finalPath}'.");
+                }
+
+                return new SuccessResponse(
+                    $"Prefab created from model at '{finalPath}'.",
+                    new
+                    {
+                        prefabPath = finalPath,
+                        modelPath = sanitizedModelPath,
+                        addedComponents = addedComponents,
+                        hasAnimator = !string.IsNullOrEmpty(animatorControllerPath)
+                    }
+                );
+            }
+            catch (Exception e)
+            {
+                return new ErrorResponse($"Error creating prefab from model: {e.Message}");
             }
         }
 

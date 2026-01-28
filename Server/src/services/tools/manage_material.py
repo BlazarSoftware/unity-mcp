@@ -48,7 +48,7 @@ def _normalize_color(value: Any) -> tuple[list[float] | None, str | None]:
 
 
 @mcp_for_unity_tool(
-    description="Manages Unity materials (set properties, colors, shaders, etc). Read-only actions: ping, get_material_info. Modifying actions: create, set_material_shader_property, set_material_color, assign_material_to_renderer, set_renderer_color.",
+    description="Manages Unity materials (set properties, colors, shaders, etc). Read-only actions: ping, get_material_info. Modifying actions: create, set_material_shader_property, set_material_color, assign_material_to_renderer, set_renderer_color, assign_by_pattern.",
     annotations=ToolAnnotations(
         title="Manage Material",
         destructiveHint=True,
@@ -63,7 +63,8 @@ async def manage_material(
         "set_material_color",
         "assign_material_to_renderer",
         "set_renderer_color",
-        "get_material_info"
+        "get_material_info",
+        "assign_by_pattern"
     ], "Action to perform."],
 
     # Common / Shared
@@ -94,6 +95,13 @@ async def manage_material(
     mode: Annotated[Literal["shared", "instance", "property_block"],
                     "Assignment/modification mode"] | None = None,
 
+    # assign_by_pattern
+    pattern_mapping: Annotated[dict[str, str] | None,
+                               """Dict mapping regex patterns to material paths.
+                               Keys are regex patterns to match against submesh/material slot names.
+                               Values are material asset paths (Assets/...).
+                               Example: {".*_body.*": "Assets/Materials/Skin.mat", ".*_clothes.*": "Assets/Materials/Fabric.mat"}"""] = None,
+
 ) -> dict[str, Any]:
     unity_instance = get_unity_instance_from_context(ctx)
 
@@ -115,6 +123,11 @@ async def manage_material(
     # --- Normalize slot to int ---
     slot = coerce_int(slot)
 
+    # --- Normalize pattern_mapping ---
+    pattern_mapping_parsed, pattern_err = normalize_properties(pattern_mapping)
+    if pattern_err:
+        return {"success": False, "message": pattern_err}
+
     # Prepare parameters for the C# handler
     params_dict = {
         "action": action.lower(),
@@ -127,7 +140,8 @@ async def manage_material(
         "target": target,
         "searchMethod": search_method,
         "slot": slot,
-        "mode": mode
+        "mode": mode,
+        "patternMapping": pattern_mapping_parsed
     }
 
     # Remove None values

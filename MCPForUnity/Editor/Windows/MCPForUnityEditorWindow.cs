@@ -59,7 +59,23 @@ namespace MCPForUnity.Editor.Windows
         // Helper to check and manage open windows from other classes
         public static bool HasAnyOpenWindow()
         {
-            return OpenWindows.Count > 0;
+            // Check if any windows are actually valid (not destroyed)
+            foreach (var w in OpenWindows)
+            {
+                try
+                {
+                    // This will throw or return false for destroyed Unity objects
+                    if (w != null && w.rootVisualElement != null)
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    // Window is in invalid state, ignore it
+                }
+            }
+            return false;
         }
 
         public static void CloseAllOpenWindows()
@@ -70,15 +86,22 @@ namespace MCPForUnity.Editor.Windows
             // Copy to array to avoid modifying the collection while iterating
             var arr = new MCPForUnityEditorWindow[OpenWindows.Count];
             OpenWindows.CopyTo(arr);
+
+            // Clear the set first to prevent any re-entry issues
+            OpenWindows.Clear();
+
             foreach (var window in arr)
             {
                 try
                 {
-                    window?.Close();
+                    if (window != null)
+                    {
+                        window.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    McpLog.Warn($"Error closing MCP window: {ex.Message}");
+                    // Silently ignore - window was already destroyed or in invalid state
                 }
             }
         }

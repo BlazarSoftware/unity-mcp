@@ -11,7 +11,7 @@ from services.tools.utils import coerce_bool
 
 
 @mcp_for_unity_tool(
-    description="Performs prefab operations (open_stage, close_stage, save_open_stage, create_from_gameobject).",
+    description="Performs prefab operations (open_stage, close_stage, save_open_stage, create_from_gameobject, create_from_model).",
     annotations=ToolAnnotations(
         title="Manage Prefabs",
         destructiveHint=True,
@@ -19,7 +19,7 @@ from services.tools.utils import coerce_bool
 )
 async def manage_prefabs(
     ctx: Context,
-    action: Annotated[Literal["open_stage", "close_stage", "save_open_stage", "create_from_gameobject"], "Perform prefab operations."],
+    action: Annotated[Literal["open_stage", "close_stage", "save_open_stage", "create_from_gameobject", "create_from_model"], "Perform prefab operations."],
     prefab_path: Annotated[str,
                            "Prefab asset path relative to Assets e.g. Assets/Prefabs/favorite.prefab"] | None = None,
     mode: Annotated[str,
@@ -32,6 +32,13 @@ async def manage_prefabs(
                                "Allow replacing an existing prefab at the same path"] | None = None,
     search_inactive: Annotated[bool,
                                "Include inactive objects when resolving the target name"] | None = None,
+    # create_from_model parameters
+    model_path: Annotated[str | None,
+                          "Path to model asset (FBX/OBJ/GLTF) for create_from_model action"] = None,
+    animator_controller: Annotated[str | None,
+                                   "Optional path to AnimatorController to add to the prefab"] = None,
+    components: Annotated[list[str] | None,
+                          "Optional list of component type names to add to the prefab root"] = None,
 ) -> dict[str, Any]:
     # Get active instance from session state
     # Removed session_state import
@@ -55,6 +62,13 @@ async def manage_prefabs(
         search_inactive_val = coerce_bool(search_inactive)
         if search_inactive_val is not None:
             params["searchInactive"] = search_inactive_val
+        # create_from_model parameters
+        if model_path:
+            params["modelPath"] = model_path
+        if animator_controller:
+            params["animatorController"] = animator_controller
+        if components:
+            params["components"] = components
         response = await send_with_unity_instance(async_send_command_with_retry, unity_instance, "manage_prefabs", params)
 
         if isinstance(response, dict) and response.get("success"):

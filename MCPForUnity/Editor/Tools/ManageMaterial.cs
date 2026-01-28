@@ -44,6 +44,9 @@ namespace MCPForUnity.Editor.Tools
                     case "get_material_info":
                         return GetMaterialInfo(@params);
 
+                    case "assign_by_pattern":
+                        return AssignByPattern(@params);
+
                     default:
                         return new ErrorResponse($"Unknown action: {action}");
                 }
@@ -458,6 +461,113 @@ namespace MCPForUnity.Editor.Tools
                 material = mat.name,
                 shader = shader.name,
                 properties = properties
+            });
+        }
+
+        private static object AssignByPattern(JObject @params)
+        {
+            string target = @params["target"]?.ToString();
+            string searchMethod = @params["searchMethod"]?.ToString();
+            JObject patternMapping = @params["patternMapping"] as JObject;
+
+            if (string.IsNullOrEmpty(target))
+            {
+                return new ErrorResponse("target is required");
+            }
+
+            if (patternMapping == null || !patternMapping.HasValues)
+            {
+                return new ErrorResponse("patternMapping is required and must be a non-empty object");
+            }
+
+            var goInstruction = new JObject { ["find"] = target };
+            if (!string.IsNullOrEmpty(searchMethod)) goInstruction["method"] = searchMethod;
+
+            GameObject go = ObjectResolver.Resolve(goInstruction, typeof(GameObject)) as GameObject;
+            if (go == null)
+            {
+                return new ErrorResponse($"Could not find target GameObject: {target}");
+            }
+
+            // Get all renderers in the target and children
+            Renderer[] renderers = go.GetComponentsInChildren<Renderer>(true);
+            if (renderers.Length == 0)
+            {
+                return new ErrorResponse($"No renderers found on {go.name} or its children");
+            }
+
+            var assignments = new List<object>();
+            var errors = new List<string>();
+
+            foreach (var renderer in renderers)
+            {
+                Material[] sharedMats = renderer.sharedMaterials;
+                bool modified = false;
+
+                for (int i = 0; i < sharedMats.Length; i++)
+                {
+                    string slotName = sharedMats[i] != null ? sharedMats[i].name : $"slot_{i}";
+
+                    foreach (var prop in patternMapping.Properties())
+                    {
+                        string pattern = prop.Name;
+                        string materialPath = prop.Value.ToString();
+
+                        try
+                        {
+                            if (System.Text.RegularExpressions.Regex.IsMatch(slotName, pattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                            {
+                                // Load the material
+                                string normalizedPath = AssetPathUtility.SanitizeAssetPath(materialPath);
+                                if (!normalizedPath.EndsWith(".mat", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    normalizedPath += ".mat";
+                                }
+
+                                Material mat = AssetDatabase.LoadAssetAtPath<Material>(normalizedPath);
+                                if (mat == null)
+                                {
+                                    errors.Add($"Material not found: {normalizedPath}");
+                                    continue;
+                                }
+
+                                Undo.RecordObject(renderer, "Assign Material by Pattern");
+                                sharedMats[i] = mat;
+                                modified = true;
+
+                                assignments.Add(new
+                                {
+                                    renderer = renderer.gameObject.name,
+                                    slot = i,
+                                    originalName = slotName,
+                                    pattern = pattern,
+                                    materialAssigned = mat.name
+                                });
+
+                                break; // Stop checking patterns for this slot
+                            }
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            errors.Add($"Invalid regex pattern '{pattern}': {ex.Message}");
+                        }
+                    }
+                }
+
+                if (modified)
+                {
+                    renderer.sharedMaterials = sharedMats;
+                    EditorUtility.SetDirty(renderer);
+                }
+            }
+
+            return new SuccessResponse($"Assigned {assignments.Count} materials by pattern", new
+            {
+                target = go.name,
+                renderersProcessed = renderers.Length,
+                assignmentsCount = assignments.Count,
+                assignments = assignments,
+                errors = errors.Count > 0 ? errors : null
             });
         }
 
