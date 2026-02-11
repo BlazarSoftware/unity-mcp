@@ -387,11 +387,13 @@ namespace MCPForUnity.Editor.Services
 
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
+                string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
                 return string.Join(Path.PathSeparator.ToString(), new[]
                 {
+                    !string.IsNullOrEmpty(home) ? Path.Combine(home, ".local", "bin") : null,
                     !string.IsNullOrEmpty(localAppData) ? Path.Combine(localAppData, "Programs", "uv") : null,
                     !string.IsNullOrEmpty(programFiles) ? Path.Combine(programFiles, "uv") : null
                 }.Where(p => !string.IsNullOrEmpty(p)).ToArray());
